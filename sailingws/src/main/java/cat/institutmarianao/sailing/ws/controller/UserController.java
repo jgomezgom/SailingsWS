@@ -81,7 +81,7 @@ public class UserController {
 	public @ResponseBody List<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
 			@RequestParam(value = "fullName", required = false) String fullName) {
 
-		List<User> users = userService.findAll();
+		List<User> users = userService.findAll(roles, fullName);
 
 		List<UserDto> usersDto = new ArrayList<>(users.size());
 		for (User user : users) {
@@ -102,15 +102,12 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
-			if (!userDto.getRole().equals(Role.CLIENT)) {
+		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN")))
+			if (!userDto.getRole().equals(Role.CLIENT))
 				throw new Exception("Clients only can create client accounts");
-			}
-		}
 
-		if (userService.existsById(userDto.getUsername())) {
+		if (userService.existsById(userDto.getUsername()))
 			throw new Exception("User with username " + userDto.getUsername() + " already exists");
-		}
 		return conversionService.convert(userService.save(convertAndEncodePassword(userDto)), UserDto.class);
 	}
 
@@ -139,9 +136,8 @@ public class UserController {
 
 	private User convertAndEncodePassword(UserDto userDto) {
 		String rawPassword = userDto.getPassword();
-		if (rawPassword != null) {
+		if (rawPassword != null)
 			userDto.setPassword(passwordEncoder.encode(rawPassword));
-		}
 		return conversionService.convert(userDto, User.class);
 	}
 }

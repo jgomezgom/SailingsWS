@@ -53,16 +53,17 @@ public class JwtUtils {
 		claims.setExpiration(new Date(System.currentTimeMillis() + expirationInMs));
 		claims.put(payloadAuth, authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
 
-		SecretKey signature = Keys.hmacShaKeyFor(secret.getBytes());
-
-		return Jwts.builder().setClaims(claims).signWith(signature).compact();
+		return Jwts.builder().setClaims(claims).signWith(getSigning()).compact();
 	}
 
 	public String generateRefreshToken(Map<String, Object> claims, String subject) {
-		SecretKey signature = Keys.hmacShaKeyFor(secret.getBytes());
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + refreshExpirationInMs)).signWith(signature)
+				.setExpiration(new Date(System.currentTimeMillis() + refreshExpirationInMs)).signWith(getSigning())
 				.compact();
+	}
+
+	private SecretKey getSigning() {
+		return Keys.hmacShaKeyFor(secret.getBytes());
 	}
 
 	public UsernamePasswordAuthenticationToken getAuthentication(String token) {
