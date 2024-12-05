@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.repository.BookedPlaceRepository;
@@ -11,6 +13,8 @@ import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+@Validated
+@Service
 public class BookedPlaceServiceimpl implements BookedPlaceService {
 
 	@Autowired

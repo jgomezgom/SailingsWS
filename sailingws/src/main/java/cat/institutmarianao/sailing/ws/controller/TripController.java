@@ -3,6 +3,8 @@ package cat.institutmarianao.sailing.ws.controller;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +41,12 @@ import jakarta.validation.constraints.Positive;
 @SecurityRequirement(name = "Bearer Authentication")
 @Validated
 public class TripController {
+
+	@Autowired
+	private ConversionService conversionService;
+
+	@Autowired
+	private ActionService actionService;
 
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
@@ -76,8 +86,8 @@ public class TripController {
 	/**/
 	@PostMapping("/save/action")
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
-		// TODO Save an action related to a trip
-		return null;
+
+		return conversionService.convert(actionService.saveAction(convertAction(actionDto)), ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
@@ -100,6 +110,10 @@ public class TripController {
 	public Iterable<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		// TODO find the tracking of a trip
 		return null;
+	}
+
+	private Action convertAction(ActionDto actionDto) {
+		return conversionService.convert(actionDto, Action.class);
 	}
 
 }

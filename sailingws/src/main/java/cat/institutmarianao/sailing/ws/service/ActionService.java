@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 
 public interface ActionService {
 
-	Action saveAction(@NotNull @Valid Action action);
+	Action saveAction(@Valid Action action);
 
 	Iterable<Action> findTrackingByTripId(@NotNull @Positive Long tripId);
 }
