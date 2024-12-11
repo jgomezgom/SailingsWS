@@ -1,5 +1,7 @@
 package cat.institutmarianao.sailing.ws.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +28,7 @@ public class ActionServiceImpl implements ActionService {
 	}
 
 	@Override
-	public Iterable<Action> findTrackingByTripId(@NotNull @Positive Long tripId) {
+	public List<Action> findTrackingByTripId(@NotNull @Positive Long tripId) {
 		return actionRepository.findByTripId(tripId);
 	}
 

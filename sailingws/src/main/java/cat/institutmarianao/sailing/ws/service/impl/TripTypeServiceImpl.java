@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.TripType;
 import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import cat.institutmarianao.sailing.ws.repository.TripTypeRepository;
 import cat.institutmarianao.sailing.ws.service.TripTypeService;
-import cat.institutmarianao.salinig.ws.exception.NotFoundException;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public class TripTypeServiceImpl implements TripTypeService {
 
@@ -21,7 +23,7 @@ public class TripTypeServiceImpl implements TripTypeService {
 	}
 
 	@Override
-	public List<TripType> findAllTripTypesByCategory(Category category) {
+	public List<TripType> findAllTripTypesByCategory(@NotNull Category category) {
 		return tripTypeRepository.findByCategory(category);
 	}
 
@@ -36,7 +38,7 @@ public class TripTypeServiceImpl implements TripTypeService {
 	}
 
 	@Override
-	public TripType findById(Long id) {
+	public TripType findById(@NotNull @Positive Long id) {
 		return tripTypeRepository.findById(id).orElseThrow(NotFoundException::new);
 	}
 

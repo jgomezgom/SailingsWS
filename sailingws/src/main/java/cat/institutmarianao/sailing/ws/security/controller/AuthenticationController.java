@@ -59,7 +59,7 @@ public class AuthenticationController {
 	}
 
 	@GetMapping(value = "/refreshtoken")
-	public ResponseEntity<?> refreshtoken(HttpServletRequest request) throws Exception {
+	public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
 		// From the HttpRequest get the claims
 		Claims claims = (Claims) request.getAttribute("claims");
 
@@ -69,10 +69,9 @@ public class AuthenticationController {
 	}
 
 	private Map<String, Object> getMapFromIoJsonwebtokenClaims(Claims claims) {
-		Map<String, Object> expectedMap = new HashMap<String, Object>();
-		for (Entry<String, Object> entry : claims.entrySet()) {
+		Map<String, Object> expectedMap = new HashMap<>();
+		for (Entry<String, Object> entry : claims.entrySet())
 			expectedMap.put(entry.getKey(), entry.getValue());
-		}
 		return expectedMap;
 	}
 }

@@ -17,22 +17,22 @@ import cat.institutmarianao.sailing.ws.model.dto.BookingDto;
 import cat.institutmarianao.sailing.ws.model.dto.CancellationDto;
 import cat.institutmarianao.sailing.ws.model.dto.DoneDto;
 import cat.institutmarianao.sailing.ws.model.dto.ReschedulingDto;
+import cat.institutmarianao.sailing.ws.service.TripService;
 import cat.institutmarianao.sailing.ws.service.UserService;
 
 @Component
 public class ActionDtoToActionConverter implements Converter<ActionDto, Action> {
 
-	// TODO Activate this: @Autowired
-	// TODO Activate this: private TripService tripService;
+	@Autowired
+	private TripService tripService;
 
 	@Autowired
 	private UserService userService;
 
 	@Override
 	public Action convert(ActionDto actionDto) {
-		if (actionDto == null) {
+		if (actionDto == null)
 			return null;
-		}
 
 		if (actionDto instanceof BookingDto bookingDto) {
 			Booking reception = new Booking();
@@ -62,7 +62,7 @@ public class ActionDtoToActionConverter implements Converter<ActionDto, Action> 
 		action.setDate(actionDto.getDate());
 		User performer = userService.getByUsername(actionDto.getPerformer());
 		action.setPerformer(performer);
-		Trip trip = null;// TODO get trip
+		Trip trip = tripService.findById(actionDto.getTripId());
 		action.setTrip(trip);
 	}
 }

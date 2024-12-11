@@ -3,7 +3,11 @@ package cat.institutmarianao.sailing.ws.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import cat.institutmarianao.sailing.ws.model.Action;
+import cat.institutmarianao.sailing.ws.model.Action.Type;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
+@JsonSubTypes({ @JsonSubTypes.Type(value = BookingDto.class, name = Action.BOOKING),
+		@JsonSubTypes.Type(value = ReschedulingDto.class, name = Action.RESCHEDULING),
+		@JsonSubTypes.Type(value = CancellationDto.class, name = Action.CANCELLATION),
+		@JsonSubTypes.Type(value = DoneDto.class, name = Action.DONE) })
 public abstract class ActionDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -33,7 +42,7 @@ public abstract class ActionDto implements Serializable {
 	/* Validation */
 	/* Lombok */
 	@NonNull
-	protected Action.Type type;
+	protected Type type;
 
 	/* Validation */
 	protected String performer;

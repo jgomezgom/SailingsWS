@@ -112,9 +112,9 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Tracking retrieved ok")
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
-	public Iterable<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
-		List<Action> actions = (List<Action>) actionService.findTrackingByTripId(tripId);
-		return actions.stream().map(a -> conversionService.convert(a, ActionDto.class)).collect(Collectors.toList());
+	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
+		return actionService.findTrackingByTripId(tripId).stream()
+				.map(a -> conversionService.convert(a, ActionDto.class)).collect(Collectors.toList());
 	}
 
 	private Trip convertTrip(TripDto tripDto) {

@@ -15,36 +15,36 @@ import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.TripType;
 import cat.institutmarianao.sailing.ws.model.User;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.service.ActionService;
+import cat.institutmarianao.sailing.ws.service.TripTypeService;
 import cat.institutmarianao.sailing.ws.service.UserService;
 
 @Component
 public class TripDtoToTripConverter implements Converter<TripDto, Trip> {
 
-	// TODO Activate this: @Autowired
-	// TODO Activate this: private ActionService actionService;
+	@Autowired
+	private ActionService actionService;
 
-	// TODO Activate this: @Autowired
-	// TODO Activate this: private TripTypeService tripTypeService;
+	@Autowired
+	private TripTypeService tripTypeService;
 
 	@Autowired
 	private UserService userService;
 
 	@Override
 	public Trip convert(TripDto tripDto) {
-		if (tripDto == null) {
+		if (tripDto == null)
 			return null;
-		}
 
 		Trip trip = new Trip();
 		copyCommonProperties(tripDto, trip);
 
 		List<Action> tracking = null;
-		if (trip.getId() != null) {
-			tracking = null; // TODO get tracking
-		}
-		if (tracking != null) {
+		if (trip.getId() != null)
+			tracking = actionService.findTrackingByTripId(trip.getId());
+		if (tracking != null)
 			trip.setTracking(tracking);
-		} else {
+		else {
 			Booking booking = new Booking();
 			booking.setTrip(trip);
 			booking.setPerformer(trip.getClient());
@@ -57,10 +57,9 @@ public class TripDtoToTripConverter implements Converter<TripDto, Trip> {
 	private void copyCommonProperties(TripDto tripDto, Trip trip) {
 		BeanUtils.copyProperties(tripDto, trip);
 		User user = userService.getByUsername(tripDto.getClientUsername());
-		if (user instanceof Client client) {
+		if (user instanceof Client client)
 			trip.setClient(client);
-		}
-		TripType tripType = null; // TODO get trip typre
+		TripType tripType = tripTypeService.findById(tripDto.getTypeId());
 		trip.setType(tripType);
 	}
 }
