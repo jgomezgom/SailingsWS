@@ -3,11 +3,21 @@ package cat.institutmarianao.sailing.ws.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Action.Type;
+import cat.institutmarianao.sailing.ws.model.User;
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -37,20 +47,27 @@ public abstract class ActionDto implements Serializable {
 	/* Validation */
 	/* Lombok */
 	@EqualsAndHashCode.Include
+	@Null(groups = { OnTripCreate.class, OnActionCreate.class })
 	protected Long id;
 
 	/* Validation */
 	/* Lombok */
 	@NonNull
+	@NotBlank
 	protected Type type;
 
 	/* Validation */
+	@NotBlank
+	@Size(min = User.MIN_USERNAME)
 	protected String performer;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SailingWsApplication.TIMESTAMP)
 	protected Date date = new Date();
 
 	/* Validation */
 	/* JSON */
+	@NotNull
+	@PositiveOrZero
 	protected Long tripId;
 
 	private String comments;

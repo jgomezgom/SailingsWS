@@ -22,8 +22,6 @@ public class Trip implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int MAX_DESCRIPTION = 500;
-
 	public static final String RESERVED = "RESERVED";
 	public static final String RESCHEDULED = "RESCHEDULED";
 	public static final String CANCELLED = "CANCELLED";

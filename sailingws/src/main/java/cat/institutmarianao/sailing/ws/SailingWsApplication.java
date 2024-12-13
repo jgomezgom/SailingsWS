@@ -16,6 +16,7 @@ public class SailingWsApplication {
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	public static final String TIME_PATTERN = "HH:mm";
 	public static final String DATE_TIME_PATTERN = DATE_PATTERN + " " + TIME_PATTERN;
+	public static final String TIMESTAMP = DATE_TIME_PATTERN + ":ss";
 
 	public static void main(String[] args) {
 		SpringApplication.run(SailingWsApplication.class, args);

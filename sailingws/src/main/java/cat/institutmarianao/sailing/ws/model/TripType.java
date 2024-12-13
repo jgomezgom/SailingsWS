@@ -17,6 +17,8 @@ public class TripType implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final int MAX_DESCRIPTION = 500;
+
 	public static final String GROUP = "GROUP";
 	public static final String PRIVATE = "PRIVATE";
 
