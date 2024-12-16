@@ -103,7 +103,8 @@ public class TripController {
 	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
 	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-		return bookedPlaceService.bookedPlaces(id, date).stream()
+		Trip trip = tripService.findById(id);
+		return bookedPlaceService.bookedPlaces(trip.getType().getId(), date).stream()
 				.map(b -> conversionService.convert(b, BookedPlaceDto.class)).collect(Collectors.toList());
 	}
 
