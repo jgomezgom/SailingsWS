@@ -22,7 +22,7 @@ public class BookedPlaceServiceimpl implements BookedPlaceService {
 
 	@Override
 	public List<BookedPlace> bookedPlaces(@NotNull @Positive Long id, @NotNull Date date) {
-		return bookedPlaceRepository.findByTripTypeIdAndDate(id, date);
+		return bookedPlaceRepository.findByIdTripTypeIdAndIdDate(id, date);
 	}
 
 }
