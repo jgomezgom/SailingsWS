@@ -1,10 +1,14 @@
 package cat.institutmarianao.sailing.ws.model;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /* Validation */
 /* JPA annotations */
+@Entity
+@DiscriminatorValue(Action.DONE)
 /* Lombok */
 @Data
 @EqualsAndHashCode(callSuper = true)

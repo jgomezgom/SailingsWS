@@ -6,6 +6,20 @@ import java.util.List;
 
 import org.hibernate.annotations.Formula;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -14,6 +28,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /* JPA annotations */
+@Entity
+@Table(name = "trips")
+
 /* Lombok */
 @Data
 @NoArgsConstructor
@@ -35,25 +52,34 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	/* JSON */
 	private Long id;
 
 	/* JPA */
+	@ManyToOne
+	@JoinColumn(name = "type_id")
 	private TripType type;
 
 	/* Validation */
 	/* JPA */
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "client_username")
 	private Client client;
 
+	@Column(name = "places")
 	private int places;
 
 	/* Validation */
 	/* JPA */
+	@OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
 	private List<@Valid Action> tracking;
 
 	/* JPA */
+	@Enumerated(EnumType.STRING)
 	/* Hibernate */
 	@Formula("(SELECT CASE a.type WHEN '" + Action.BOOKING + "' THEN '" + Trip.RESERVED + "' WHEN '"
 			+ Action.RESCHEDULING + "' THEN '" + Trip.RESCHEDULED + "' WHEN '" + Action.CANCELLATION + "' THEN '"
@@ -66,8 +92,12 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Column(name = "date")
+	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	/* JPA */
+	@Column(name = "departure")
+	@Temporal(TemporalType.TIME)
 	private Date departure;
 }
