@@ -100,11 +100,10 @@ public class TripController {
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TripDto.class)) }, description = "Booked places retrieved ok")
-	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
-	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
+	@GetMapping(value = "/bookedPlaces/{trip_type_id}/{date}")
+	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_type_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-		Trip trip = tripService.findById(id);
-		return bookedPlaceService.bookedPlaces(trip.getType().getId(), date).stream()
+		return bookedPlaceService.bookedPlaces(id, date).stream()
 				.map(b -> conversionService.convert(b, BookedPlaceDto.class)).collect(Collectors.toList());
 	}
 
