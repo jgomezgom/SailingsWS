@@ -3,10 +3,10 @@ package cat.institutmarianao.sailing.ws.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.HttpClientErrorException;
 
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Action.Type;
@@ -26,18 +26,23 @@ public class ActionServiceImpl implements ActionService {
 
 	@Autowired
 	private ActionRepository actionRepository;
+	
+	@Autowired
+	private MessageSource messageSource;
 
 	@Override
 	@Validated(OnActionCreate.class)
 	public Action saveAction(@Valid Action action) {
 
 		if (action.getType().equals(Type.BOOKING))
-			throw new ConstraintViolationException(null);
+			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.booking",
+					null,LocaleContextHolder.getLocale()),null);
 
 		Trip trip = action.getTrip();
 
 		if (trip.getStatus().equals(Status.CANCELLED) || trip.getStatus().equals(Status.DONE))
-			throw new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "sad");
+			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.finished",
+					null,LocaleContextHolder.getLocale()),null);
 
 		return actionRepository.saveAndFlush(action);
 	}
