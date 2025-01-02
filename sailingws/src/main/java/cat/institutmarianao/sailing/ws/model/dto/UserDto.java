@@ -2,6 +2,8 @@ package cat.institutmarianao.sailing.ws.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -45,6 +47,7 @@ public abstract class UserDto implements Serializable {
 	@NonNull
 	@NotBlank
 	@Size(min = User.MIN_PASSWORD, max = User.MAX_USERNAME)
+	@JsonProperty(access = Access.WRITE_ONLY)
 	protected String password;
 
 	/* Validation */

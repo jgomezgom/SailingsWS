@@ -3,6 +3,7 @@ package cat.institutmarianao.sailing.ws.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.TripType;
@@ -12,6 +13,7 @@ import cat.institutmarianao.sailing.ws.service.TripTypeService;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+@Service
 public class TripTypeServiceImpl implements TripTypeService {
 
 	@Autowired
