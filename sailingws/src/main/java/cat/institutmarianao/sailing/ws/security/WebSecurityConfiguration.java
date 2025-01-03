@@ -21,7 +21,9 @@ import jakarta.servlet.DispatcherType;
 public class WebSecurityConfiguration {
 	protected static final String[] PUBLIC_URLS = { "/", "/users/save", "/users/check/**" };
 	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/delete/**", "/trips/find/all", };
+	protected static final String[] CLIENT_URLS= {"/trips/save"};
 	protected static final String[] USER_URLS = { "/users/**" };
+	
 
 	@Autowired
 	private AuthenticationFilter authenticationFilter;
@@ -50,6 +52,7 @@ public class WebSecurityConfiguration {
 				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
 						.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
 						.requestMatchers(PUBLIC_URLS).permitAll().requestMatchers(ADMIN_URLS).hasRole(User.ADMIN)
+						.requestMatchers(CLIENT_URLS).hasRole(User.CLIENT)
 						.requestMatchers(USER_URLS).hasAnyRole(User.ADMIN, User.CLIENT).anyRequest().permitAll())
 				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class).build();

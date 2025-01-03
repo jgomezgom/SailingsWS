@@ -14,11 +14,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /* Lombok */
 @Data
@@ -50,7 +48,6 @@ public class TripDto implements Serializable {
 	private int places;
 
 	/* Lombok */
-	@Setter(AccessLevel.NONE)
 	private Status status;
 
 	/* Validation */

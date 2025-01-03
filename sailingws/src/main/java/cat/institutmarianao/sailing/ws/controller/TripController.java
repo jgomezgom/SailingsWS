@@ -1,5 +1,6 @@
 package cat.institutmarianao.sailing.ws.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +63,7 @@ public class TripController {
 
 	@Autowired
 	private BookedPlaceService bookedPlaceService;
+	
 
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
@@ -105,8 +107,7 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Action saved ok")
 	/**/
 	@PostMapping("/save/action")
-	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
-
+	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) throws ParseException {
 		return conversionService.convert(actionService.saveAction(convertAction(actionDto)), ActionDto.class);
 	}
 
