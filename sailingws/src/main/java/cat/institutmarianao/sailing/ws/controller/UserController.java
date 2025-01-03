@@ -1,11 +1,11 @@
 package cat.institutmarianao.sailing.ws.controller;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -78,18 +78,10 @@ public class UserController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody List<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
-			@RequestParam(value = "fullName", required = false) String fullName) {
+	public @ResponseBody Page<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
+			@RequestParam(value = "fullName", required = false) String fullName,Pageable pagination) {
 
-		List<User> users = userService.findAll(roles, fullName);
-
-		List<UserDto> usersDto = new ArrayList<>(users.size());
-		for (User user : users) {
-			UserDto userDto = conversionService.convert(user, UserDto.class);
-			usersDto.add(userDto);
-		}
-
-		return usersDto;
+		return userService.findAll(roles, fullName,pagination).map(u->conversionService.convert(u, UserDto.class));
 	}
 
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")

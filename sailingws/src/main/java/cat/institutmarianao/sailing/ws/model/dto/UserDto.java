@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import cat.institutmarianao.sailing.ws.model.User;
 import cat.institutmarianao.sailing.ws.model.User.Role;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,11 +47,11 @@ public abstract class UserDto implements Serializable {
 	/* Lombok */
 	@NonNull
 	@NotBlank
-	@Size(min = User.MIN_PASSWORD, max = User.MAX_USERNAME)
+	@Size(min = User.MIN_PASSWORD)
 	@JsonProperty(access = Access.WRITE_ONLY)
 	protected String password;
 
 	/* Validation */
-	@NotBlank
+	@NotNull
 	protected Role role;
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,12 +25,14 @@ public class Rescheduling extends Action {
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@Temporal(TemporalType.DATE)
 	@Column(name = "new_date")
 	private Date newDate;
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@Temporal(TemporalType.TIME)
 	@Column(name = "new_departure")
 	private Date newDeparture;

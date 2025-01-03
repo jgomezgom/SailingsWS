@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripTypeCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripTypeUpdate;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -17,6 +19,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -45,7 +53,9 @@ public class TripType implements Serializable {
 	/* Validation */
 	/* JPA */
 	@Id
-	@Column(name = "id")
+	@Null(groups = OnTripTypeCreate.class)
+	@NotNull(groups = OnTripTypeUpdate.class)
+	@PositiveOrZero
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/* Lombok */
 	@EqualsAndHashCode.Include
@@ -53,39 +63,45 @@ public class TripType implements Serializable {
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "title")
+	@NotBlank
+	@Column(nullable = false)
 	private String title;
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "category")
+	@Column(nullable = false)
 	private Category category;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "description")
+	@NotBlank
+	@Size(max = MAX_DESCRIPTION)
+	@Column(nullable = false)
 	private String description;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "price")
+	@Positive
+	@Column(nullable = false)
 	private double price;
 
 	/* JPA */
 	@ElementCollection
-	@CollectionTable(name = "trip_type_departures", joinColumns = @JoinColumn(name = "trip_type_id"))
-	@Column(name = "departure")
+	@CollectionTable(name = "trip_type_departures", joinColumns = @JoinColumn(name = "trip_type_id",nullable = false))
+	@Column(name = "departure",nullable = false)
 	@Temporal(TemporalType.TIME)
 	private List<Date> departures;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "duration")
+	@Positive
 	private int duration;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "max_places")
+	@Positive
+	@Column(name = "max_places",nullable = false)
 	private int maxPlaces;
 }

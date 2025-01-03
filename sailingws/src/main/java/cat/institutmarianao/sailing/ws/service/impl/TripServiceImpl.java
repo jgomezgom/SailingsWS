@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -34,12 +36,12 @@ public class TripServiceImpl implements TripService {
 	private TripRepository tripRepository;
 
 	@Override
-	public List<Trip> findAll(Category category,String clientUsername,Integer places,Status status,
-								Date fromDate,Date toDate,Date fromDeparture,Date toDeparture) {
+	public Page<Trip> findAll(Category category,String clientUsername,Integer places,Status status,
+								Date fromDate,Date toDate,Date fromDeparture,Date toDeparture,Pageable pageable) {
 		Specification<Trip> spec = Specification.where(new TripWithCategory(category)).and(new TripWithClient(clientUsername))
 												.and(new TripWithPlaces(places)).and(new TripWithStatus(status))
 												.and(new TripWithDate(fromDate, toDate)).and(new TripWithDeparture(fromDeparture, toDeparture));
-		return tripRepository.findAll(spec);
+		return tripRepository.findAll(spec,pageable);
 	}
 
 	@Override

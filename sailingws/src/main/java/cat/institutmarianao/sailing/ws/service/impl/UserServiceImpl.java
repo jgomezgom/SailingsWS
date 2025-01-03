@@ -1,8 +1,8 @@
 package cat.institutmarianao.sailing.ws.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -29,9 +29,9 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Override
-	public List<User> findAll(Role[] roles, String fullName) {
+	public Page<User> findAll(Role[] roles, String fullName, Pageable pageable) {
 		Specification<User> spec = Specification.where(new UserWithRole(roles)).and(new UserWithFullName(fullName));
-		return userRepository.findAll(spec);
+		return userRepository.findAll(spec,pageable);
 	}
 
 	@Override

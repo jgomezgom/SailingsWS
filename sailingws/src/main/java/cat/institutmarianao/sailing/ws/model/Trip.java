@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.hibernate.annotations.Formula;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripUpdate;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +23,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,23 +58,29 @@ public class Trip implements Serializable {
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Null(groups = OnTripCreate.class)
+	@NotNull(groups = OnTripUpdate.class)
+	@PositiveOrZero
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	/* JSON */
 	private Long id;
 
 	/* JPA */
+	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "type_id")
+	@JoinColumn(name = "type_id",nullable = false)
 	private TripType type;
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "client_username")
+	@JoinColumn(name = "client_username",nullable = false)
 	private Client client;
 
-	@Column(name = "places")
+	@Positive
+	@Column(nullable = false)
 	private int places;
 
 	/* Validation */
@@ -90,12 +102,12 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "date")
+	@NotNull
+	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	/* JPA */
-	@Column(name = "departure")
 	@Temporal(TemporalType.TIME)
 	private Date departure;
 }

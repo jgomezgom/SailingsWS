@@ -8,13 +8,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /* Lombok */
 @Data
@@ -29,6 +33,8 @@ public class TripDto implements Serializable {
 	@EqualsAndHashCode.Include
 	/* JSON */
 	@Null(groups = OnTripCreate.class)
+	@NotNull(groups = OnTripUpdate.class)
+	@PositiveOrZero
 	private Long id;
 
 	/* JPA */
@@ -40,9 +46,11 @@ public class TripDto implements Serializable {
 	@NotBlank
 	private String clientUsername;
 
+	@Positive
 	private int places;
 
 	/* Lombok */
+	@Setter(AccessLevel.NONE)
 	private Status status;
 
 	/* Validation */
@@ -52,7 +60,6 @@ public class TripDto implements Serializable {
 	private Date date;
 
 	/* JSON */
-	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SailingWsApplication.TIME_PATTERN)
 	private Date departure;
 }

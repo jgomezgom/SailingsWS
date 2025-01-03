@@ -12,6 +12,7 @@ import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Action.Type;
 import cat.institutmarianao.sailing.ws.model.User;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionUpdate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -47,13 +48,15 @@ public abstract class ActionDto implements Serializable {
 	/* Validation */
 	/* Lombok */
 	@EqualsAndHashCode.Include
-	@Null(groups = { OnTripCreate.class, OnActionCreate.class })
+	@Null(groups = {OnActionCreate.class,OnTripCreate.class})
+	@NotNull(groups = OnActionUpdate.class)
+	@PositiveOrZero
 	protected Long id;
 
 	/* Validation */
 	/* Lombok */
 	@NonNull
-	@NotBlank
+	@NotNull
 	protected Type type;
 
 	/* Validation */

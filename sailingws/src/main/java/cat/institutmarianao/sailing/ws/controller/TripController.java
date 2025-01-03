@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,16 +67,17 @@ public class TripController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody List<TripDto> findAll(@RequestParam(value = "type", required = false) Category category,
+	public @ResponseBody Page<TripDto> findAll(@RequestParam(value = "type", required = false) Category category,
 			@RequestParam(value = "client username", required = false) String clientUsername,
 			@RequestParam(value = "places", required = false) Integer places,
 			@RequestParam(value = "status", required = false) Status status,
 			@RequestParam(value = "from date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date fromDate,
 			@RequestParam(value = "to date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
 			@RequestParam(value = "from departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
-			@RequestParam(value = "to departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture) {
-		return tripService.findAll(category,clientUsername,places,status,fromDate,toDate,fromDeparture,toDeparture).stream().map(t -> conversionService.convert(t, TripDto.class))
-				.collect(Collectors.toList());
+			@RequestParam(value = "to departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
+			Pageable pagination) {
+		
+		return tripService.findAll(category,clientUsername,places,status,fromDate,toDate,fromDeparture,toDeparture,pagination).map(t -> conversionService.convert(t, TripDto.class));
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")

@@ -10,10 +10,12 @@ import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.TripType;
 import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripTypeCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripTypeUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +33,8 @@ public class TripTypeDto implements Serializable {
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	@Null(groups = OnTripTypeCreate.class)
+	@NotNull(groups = OnTripTypeUpdate.class)
+	@PositiveOrZero
 	private Long id;
 
 	/* Validation */
@@ -38,7 +42,7 @@ public class TripTypeDto implements Serializable {
 	private String title;
 
 	/* Validation */
-	@NotBlank
+	@NotNull
 	private Category category;
 
 	/* Validation */
@@ -47,7 +51,6 @@ public class TripTypeDto implements Serializable {
 	private String description;
 
 	/* Validation */
-	@NotNull
 	@Positive
 	private double price;
 
@@ -56,12 +59,10 @@ public class TripTypeDto implements Serializable {
 	private List<Date> departures;
 
 	/* Validation */
-	@NotNull
 	@Positive
 	private int duration;
 
 	/* Validation */
-	@NotNull
 	@Positive
 	private int maxPlaces;
 }

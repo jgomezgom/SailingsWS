@@ -5,6 +5,7 @@ import java.io.Serializable;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,12 +27,14 @@ public class Client extends User implements Serializable {
 	/* Validation */
 	// @NotBlank(groups = OnUserCreate.class)
 	/* JPA */
-	@Column(name = "full_name")
+	@NotBlank
+	@Column(name = "full_name",nullable = false)
 	protected String fullName;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "phone")
 	// @NotNull(groups = OnUserCreate.class)
+	@NotBlank
+	@Column(nullable = false)
 	protected String phone;
 }

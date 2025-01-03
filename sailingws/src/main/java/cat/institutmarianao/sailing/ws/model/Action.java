@@ -3,7 +3,9 @@ package cat.institutmarianao.sailing.ws.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.persistence.Basic;
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionUpdate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -21,6 +23,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -61,6 +66,9 @@ public abstract class Action implements Serializable {
 	/* Validation */
 	/* JPA */
 	@Id
+	@Null(groups = {OnActionCreate.class,OnTripCreate.class})
+	@NotNull(groups = OnActionUpdate.class)
+	@PositiveOrZero
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/* Lombok */
 	@EqualsAndHashCode.Include
@@ -68,6 +76,7 @@ public abstract class Action implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, insertable = false, updatable = false)
 	/* Lombok */
@@ -76,23 +85,24 @@ public abstract class Action implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "performer_username")
+	@JoinColumn(name = "performer_username",nullable = false)
 	protected User performer;
 
 	/* JPA */
-	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "date")
+	@Column(nullable = false)
 	protected Date date = new Date();
 
 	/* Validation */
 	/* JPA */
+	@JoinColumn(nullable = false)
+	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL)
 	/* JSON */
 	protected Trip trip;
 
 	/* JPA */
-	@Column(name = "comments")
 	private String comments;
 }
