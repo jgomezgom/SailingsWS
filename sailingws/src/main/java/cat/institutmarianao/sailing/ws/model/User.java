@@ -2,6 +2,8 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserUpdate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -50,19 +52,19 @@ public abstract class User implements Serializable {
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	@NotBlank
-	@Size(min = MIN_USERNAME)
+	@Size(min = MIN_USERNAME,max=MAX_USERNAME,groups = {OnUserCreate.class,OnUserUpdate.class})
 	protected String username;
 
 	/* Validation */
 	/* JPA */
-	@NotBlank
-	@Size(min = MIN_PASSWORD)
+	@NotBlank(groups = {OnUserCreate.class,OnUserUpdate.class})
+	@Size(min = MIN_PASSWORD,groups = {OnUserCreate.class,OnUserUpdate.class})
 	@Column(nullable = false)
 	protected String password;
 
 	/* Validation */
 	/* JPA */
-	@NotNull
+	@NotNull(groups = {OnUserCreate.class,OnUserUpdate.class})
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, insertable = false, updatable = false)
 	protected Role role;

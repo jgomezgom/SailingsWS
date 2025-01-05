@@ -68,7 +68,7 @@ public abstract class Action implements Serializable {
 	@Id
 	@Null(groups = {OnActionCreate.class,OnTripCreate.class})
 	@NotNull(groups = OnActionUpdate.class)
-	@PositiveOrZero
+	@PositiveOrZero(groups = OnActionUpdate.class)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/* Lombok */
 	@EqualsAndHashCode.Include

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.exception.model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 
@@ -47,6 +48,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.UNPROCESSABLE_ENTITY);
 	}
+	
+	/**
+	 * For individual cases of Forbidden actions 
+	 */
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<Object> handleForbiddenException(Exception ex) {
+		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.FORBIDDEN);
+	}
+	
 
 	/**
 	 * Any other exception

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import cat.institutmarianao.sailing.ws.model.User;
 import cat.institutmarianao.sailing.ws.model.User.Role;
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -39,19 +41,19 @@ public abstract class UserDto implements Serializable {
 	/* Lombok */
 	@NonNull
 	@EqualsAndHashCode.Include
-	@NotBlank
-	@Size(min = User.MIN_USERNAME)
+	@NotBlank(groups = {OnUserCreate.class,OnUserUpdate.class})
+	@Size(min = User.MIN_USERNAME, max = User.MAX_USERNAME,groups = {OnUserCreate.class,OnUserUpdate.class})
 	protected String username;
 
 	/* Validation */
 	/* Lombok */
 	@NonNull
-	@NotBlank
-	@Size(min = User.MIN_PASSWORD)
+	@NotBlank(groups = {OnUserCreate.class,OnUserUpdate.class})
+	@Size(min = User.MIN_PASSWORD,groups = {OnUserCreate.class,OnUserUpdate.class})
 	@JsonProperty(access = Access.WRITE_ONLY)
 	protected String password;
 
 	/* Validation */
-	@NotNull
+	@NotNull(groups = {OnUserCreate.class,OnUserUpdate.class})
 	protected Role role;
 }

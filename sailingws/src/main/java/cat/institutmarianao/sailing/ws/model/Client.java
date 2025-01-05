@@ -2,6 +2,7 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -27,14 +28,14 @@ public class Client extends User implements Serializable {
 	/* Validation */
 	// @NotBlank(groups = OnUserCreate.class)
 	/* JPA */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	@Column(name = "full_name",nullable = false)
 	protected String fullName;
 
 	/* Validation */
 	/* JPA */
 	// @NotNull(groups = OnUserCreate.class)
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	@Column(nullable = false)
 	protected String phone;
 }

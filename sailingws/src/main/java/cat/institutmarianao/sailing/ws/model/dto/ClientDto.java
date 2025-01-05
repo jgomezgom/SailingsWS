@@ -3,6 +3,7 @@ package cat.institutmarianao.sailing.ws.model.dto;
 import java.io.Serializable;
 
 import cat.institutmarianao.sailing.ws.model.User.Role;
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,11 +21,11 @@ public class ClientDto extends UserDto implements Serializable {
 	public static final int MAX_FULL_NAME = 100;
 
 	/* Validation */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	protected String fullName;
 
 	/* Validation */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	protected String phone;
 
 	public ClientDto(String username, String password, String fullName, String phone) {

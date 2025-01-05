@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
@@ -103,6 +104,7 @@ public class Trip implements Serializable {
 	/* Validation */
 	/* JPA */
 	@NotNull
+	@Future
 	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date date;

@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +23,6 @@ import cat.institutmarianao.sailing.ws.specifications.TripWithDeparture;
 import cat.institutmarianao.sailing.ws.specifications.TripWithPlaces;
 import cat.institutmarianao.sailing.ws.specifications.TripWithStatus;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,12 +35,10 @@ public class TripServiceImpl implements TripService {
 	@Autowired
 	private TripRepository tripRepository;
 	
-	@Autowired
-	private MessageSource messageSource;
-
 	@Override
 	public Page<Trip> findAll(Category category,String clientUsername,Integer places,Status status,
 								Date fromDate,Date toDate,Date fromDeparture,Date toDeparture,Pageable pageable) {
+		
 		Specification<Trip> spec = Specification.where(new TripWithCategory(category)).and(new TripWithClient(clientUsername))
 												.and(new TripWithPlaces(places)).and(new TripWithStatus(status))
 												.and(new TripWithDate(fromDate, toDate)).and(new TripWithDeparture(fromDeparture, toDeparture));
@@ -58,9 +53,6 @@ public class TripServiceImpl implements TripService {
 	@Override
 	@Validated(OnTripCreate.class)
 	public Trip save(@NotNull @Valid Trip trip) {
-		if(trip.getDate().before(new Date()))
-			throw new ConstraintViolationException(messageSource.getMessage("error.Trip.date",
-					null,LocaleContextHolder.getLocale()),null);
 		return tripRepository.saveAndFlush(trip);
 	}
 
