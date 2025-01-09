@@ -41,19 +41,19 @@ public abstract class UserDto implements Serializable {
 	/* Lombok */
 	@NonNull
 	@EqualsAndHashCode.Include
-	@NotBlank(groups = {OnUserCreate.class,OnUserUpdate.class})
-	@Size(min = User.MIN_USERNAME, max = User.MAX_USERNAME,groups = {OnUserCreate.class,OnUserUpdate.class})
+	@NotBlank
+	@Size(min = User.MIN_USERNAME, max = User.MAX_USERNAME)
 	protected String username;
 
 	/* Validation */
 	/* Lombok */
 	@NonNull
-	@NotBlank(groups = {OnUserCreate.class,OnUserUpdate.class})
-	@Size(min = User.MIN_PASSWORD,groups = {OnUserCreate.class,OnUserUpdate.class})
+	@NotBlank
+	@Size(min = User.MIN_PASSWORD, groups = { OnUserCreate.class, OnUserUpdate.class })
 	@JsonProperty(access = Access.WRITE_ONLY)
 	protected String password;
 
 	/* Validation */
-	@NotNull(groups = {OnUserCreate.class,OnUserUpdate.class})
+	@NotNull
 	protected Role role;
 }

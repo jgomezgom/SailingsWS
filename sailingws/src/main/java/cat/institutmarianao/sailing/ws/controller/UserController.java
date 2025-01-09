@@ -1,14 +1,11 @@
 package cat.institutmarianao.sailing.ws.controller;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +33,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,12 +53,15 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private MessageSource messageSource;
+
 	@Operation(summary = "Check if user exists", description = "Check if a user exists in the database. The response is true if exists, false otherwise")
 	@ApiResponse(responseCode = "200", content = { @Content() }, description = "Check goes ok")
 	@ApiResponse(responseCode = "500", content = {
 			@Content() }, description = "Error checking the user. See response body for more details")
 	@GetMapping(value = "/check/{username}")
-	public @ResponseBody boolean check(@PathVariable("username") @NotBlank String username) throws Exception {
+	public @ResponseBody boolean check(@PathVariable("username") @NotBlank String username) {
 		return userService.existsById(username);
 	}
 
@@ -79,9 +80,9 @@ public class UserController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
-			@RequestParam(value = "fullName", required = false) String fullName,Pageable pagination) {
+			@RequestParam(value = "fullName", required = false) String fullName, Pageable pagination) {
 
-		return userService.findAll(roles, fullName,pagination).map(u->conversionService.convert(u, UserDto.class));
+		return userService.findAll(roles, fullName, pagination).map(u -> conversionService.convert(u, UserDto.class));
 	}
 
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")
@@ -90,16 +91,11 @@ public class UserController {
 	@ApiResponse(responseCode = "500", content = {
 			@Content() }, description = "Error saving the user. See response body for more details")
 	@PostMapping(value = "/save")
-	public @ResponseBody UserDto save(@RequestBody @NotNull UserDto userDto) throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN")))
-			if (!userDto.getRole().equals(Role.CLIENT))
-				throw new Exception("Clients only can create client accounts");
+	public @ResponseBody UserDto save(@RequestBody @NotNull UserDto userDto) {
 
 		if (userService.existsById(userDto.getUsername()))
-			throw new Exception("User with username " + userDto.getUsername() + " already exists");
+			throw new ConstraintViolationException(messageSource.getMessage("error.UserService.user.already.exists",
+					new Object[] { userDto.getUsername() }, LocaleContextHolder.getLocale()), null);
 		return conversionService.convert(userService.save(convertAndEncodePassword(userDto)), UserDto.class);
 	}
 

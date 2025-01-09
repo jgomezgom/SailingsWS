@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,11 +21,11 @@ import jakarta.servlet.DispatcherType;
 
 @Configuration
 public class WebSecurityConfiguration {
-	protected static final String[] PUBLIC_URLS = { "/", "/users/save", "/users/check/**" };
-	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/delete/**", "/trips/find/all", };
-	protected static final String[] CLIENT_URLS= {"/trips/save"};
+	protected static final String[] PUBLIC_URLS = { "/", "/signup", "/users/check/**" };
+	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/save", "/users/delete/**",
+			"/trips/find/all", };
+	protected static final String[] CLIENT_URLS = { "/trips/save" };
 	protected static final String[] USER_URLS = { "/users/**" };
-	
 
 	@Autowired
 	private AuthenticationFilter authenticationFilter;
@@ -48,12 +50,12 @@ public class WebSecurityConfiguration {
 	// , final JwtAuthorizationFilter jwtAuthorizationFilter
 	) throws Exception {
 
-		return http.csrf(csrf -> csrf.disable())
+		return http.csrf((Customizer<CsrfConfigurer<HttpSecurity>>) CsrfConfigurer::disable)
 				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
 						.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
 						.requestMatchers(PUBLIC_URLS).permitAll().requestMatchers(ADMIN_URLS).hasRole(User.ADMIN)
-						.requestMatchers(CLIENT_URLS).hasRole(User.CLIENT)
-						.requestMatchers(USER_URLS).hasAnyRole(User.ADMIN, User.CLIENT).anyRequest().permitAll())
+						.requestMatchers(CLIENT_URLS).hasRole(User.CLIENT).requestMatchers(USER_URLS)
+						.hasAnyRole(User.ADMIN, User.CLIENT).anyRequest().permitAll())
 				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}

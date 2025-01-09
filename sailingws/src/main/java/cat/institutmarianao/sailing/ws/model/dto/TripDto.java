@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
@@ -49,6 +51,7 @@ public class TripDto implements Serializable {
 	private int places;
 
 	/* Lombok */
+	@JsonProperty(access = Access.READ_ONLY)
 	private Status status;
 
 	/* Validation */
