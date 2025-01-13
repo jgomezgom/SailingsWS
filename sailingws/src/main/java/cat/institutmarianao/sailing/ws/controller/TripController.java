@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -67,7 +66,7 @@ public class TripController {
 
 	@Autowired
 	private TripService tripService;
-
+	
 	@Autowired
 	private ActionService actionService;
 
@@ -101,7 +100,7 @@ public class TripController {
 	@GetMapping(value = "/find/all/by/client/username/{username}")
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 		return tripService.findAllByClientUsername(username).stream()
-				.map(t -> conversionService.convert(t, TripDto.class)).collect(Collectors.toList());
+				.map(t -> conversionService.convert(t, TripDto.class)).toList();
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")
@@ -139,8 +138,8 @@ public class TripController {
 	@GetMapping(value = "/bookedPlaces/{trip_type_id}/{date}")
 	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_type_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-		return bookedPlaceService.bookedPlaces(id, date).stream()
-				.map(b -> conversionService.convert(b, BookedPlaceDto.class)).collect(Collectors.toList());
+		return bookedPlaceService.bookedPlacesFromDate(id, date).stream()
+				.map(b -> conversionService.convert(b, BookedPlaceDto.class)).toList();
 	}
 
 	@Operation(summary = "Find tracking by trip id", description = "Gets the tracking of a trip by its id")
@@ -150,7 +149,7 @@ public class TripController {
 	@GetMapping("/find/tracking/by/id/{tripId}")
 	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		return actionService.findTrackingByTripId(tripId).stream()
-				.map(a -> conversionService.convert(a, ActionDto.class)).collect(Collectors.toList());
+				.map(a -> conversionService.convert(a, ActionDto.class)).toList();
 	}
 
 	private Trip convertTrip(TripDto tripDto) {

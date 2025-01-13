@@ -1,5 +1,6 @@
 package cat.institutmarianao.sailing.ws.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,6 @@ import cat.institutmarianao.sailing.ws.model.Trip;
 public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
 
 	List<Trip> findByClientUsername(String username);
+	
+	List<Trip> findByTypeIdAndDateAndDeparture(Long tripTypeId,Date date, Date departure);
 }

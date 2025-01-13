@@ -1,7 +1,6 @@
 package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -41,8 +40,7 @@ public class TripTypeController {
 	/**/
 	@GetMapping("/find/all")
 	public List<TripTypeDto> findAllTripTypes() {
-		return tripTypeService.findAllTripTypes().stream().map(tt -> conversionService.convert(tt, TripTypeDto.class))
-				.collect(Collectors.toList());
+		return tripTypeService.findAllTripTypes().stream().map(tt -> conversionService.convert(tt, TripTypeDto.class)).toList();
 	}
 
 	/* Swagger */
@@ -53,7 +51,7 @@ public class TripTypeController {
 	@GetMapping("/find/all/{category}")
 	public List<TripTypeDto> findAllTripTypesByCategory(@PathVariable("category") Category category) {
 		return tripTypeService.findAllTripTypesByCategory(category).stream()
-				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).collect(Collectors.toList());
+				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).toList();
 	}
 
 	/* Swagger */
@@ -64,7 +62,7 @@ public class TripTypeController {
 	@GetMapping("/find/all/group")
 	public List<TripTypeDto> findAllGroupTripTypes() {
 		return tripTypeService.findAllGroupTripTypes().stream()
-				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).collect(Collectors.toList());
+				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).toList();
 	}
 
 	/* Swagger */
@@ -75,7 +73,7 @@ public class TripTypeController {
 	@GetMapping("/find/all/private")
 	public List<TripTypeDto> findAllPrivateTripTypes() {
 		return tripTypeService.findAllPrivateTripTypes().stream()
-				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).collect(Collectors.toList());
+				.map(tt -> conversionService.convert(tt, TripTypeDto.class)).toList();
 	}
 
 	/* Swagger */
