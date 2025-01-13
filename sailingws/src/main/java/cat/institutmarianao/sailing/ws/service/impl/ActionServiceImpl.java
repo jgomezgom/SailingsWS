@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Booking;
 import cat.institutmarianao.sailing.ws.model.Cancellation;
@@ -33,10 +34,10 @@ public class ActionServiceImpl implements ActionService {
 
 	@Autowired
 	private ActionRepository actionRepository;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Value("${sailingws.max.hours.difference}")
 	private int maxHoursDifference;
 
@@ -53,31 +54,41 @@ public class ActionServiceImpl implements ActionService {
 	public List<Action> findTrackingByTripId(@NotNull @Positive Long tripId) {
 		return actionRepository.findByTripId(tripId);
 	}
-	
+
 	private void checkErrors(Action action) throws ParseException {
 		Trip trip = action.getTrip();
 
 		if (trip.getStatus().equals(Status.CANCELLED) || trip.getStatus().equals(Status.DONE))
 			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.finished",
-					null,LocaleContextHolder.getLocale()),null);
-		
+					null, LocaleContextHolder.getLocale()), null);
+
 		if (action instanceof Booking)
 			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.booking",
-					null,LocaleContextHolder.getLocale()),null);
+					null, LocaleContextHolder.getLocale()), null);
 
-		if(action instanceof Cancellation) checkHours(trip);
+		if (action instanceof Cancellation) {
+			checkPerformer(action, trip);
+			checkHours(trip);
+		}
+	}
+
+	private void checkPerformer(Action action, Trip trip) {
+		if (!action.getPerformer().equals(trip.getClient()))
+			throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.performer", null,
+					LocaleContextHolder.getLocale()));
+
 	}
 
 	private void checkHours(Trip trip) throws ParseException {
-		SimpleDateFormat sdfDate= new SimpleDateFormat(SailingWsApplication.DATE_PATTERN);
-		SimpleDateFormat sdfTime= new SimpleDateFormat(SailingWsApplication.TIME_PATTERN);
-		SimpleDateFormat sdfDateTime= new SimpleDateFormat(SailingWsApplication.DATE_TIME_PATTERN);
-		
-		Date tripDate= sdfDateTime.parse(sdfDate.format(trip.getDate())+" "+sdfTime.format(trip.getDeparture()));
-		long difference= Duration.ofMillis(tripDate.getTime()-new Date().getTime()).toHours();
-		if(difference<maxHoursDifference)
-			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.cancellation.date.difference",
-					null,LocaleContextHolder.getLocale()),null);
+		SimpleDateFormat sdfDate = new SimpleDateFormat(SailingWsApplication.DATE_PATTERN);
+		SimpleDateFormat sdfTime = new SimpleDateFormat(SailingWsApplication.TIME_PATTERN);
+		SimpleDateFormat sdfDateTime = new SimpleDateFormat(SailingWsApplication.DATE_TIME_PATTERN);
+
+		Date tripDate = sdfDateTime.parse(sdfDate.format(trip.getDate()) + " " + sdfTime.format(trip.getDeparture()));
+		long difference = Duration.ofMillis(tripDate.getTime() - new Date().getTime()).toHours();
+		if (difference < maxHoursDifference)
+			throw new ConstraintViolationException(messageSource.getMessage(
+					"error.Tracking.action.cancellation.date.difference", null, LocaleContextHolder.getLocale()), null);
 	}
 
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -118,8 +119,13 @@ public class UserController {
 			@Content(mediaType = "application/json") }, description = "User deleted ok")
 	/**/
 	@DeleteMapping("/delete/by/username/{username}")
-	public void deleteByUsername(@PathVariable("username") @NotBlank String username) {
-		userService.deleteByUsername(username);
+	public void deleteByUsername(@PathVariable("username") @NotBlank String username) throws IllegalStateException {
+		try {
+			userService.deleteByUsername(username);
+		} catch (DataIntegrityViolationException e) {
+			throw new IllegalStateException(
+					messageSource.getMessage("error.UserService.user.delete", null, LocaleContextHolder.getLocale()));
+		}
 	}
 
 	private User convertAndEncodePassword(UserDto userDto) {
