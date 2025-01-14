@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import cat.institutmarianao.sailing.ws.error.utils.DepartureChecker;
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
@@ -39,21 +40,21 @@ public class TripServiceImpl implements TripService {
 
 	@Autowired
 	private TripRepository tripRepository;
-	
+
 	@Autowired
 	private BookedPlaceService bookedPlaceService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Override
-	public Page<Trip> findAll(Category category,String clientUsername,Integer places,Status status,
-								Date fromDate,Date toDate,Date fromDeparture,Date toDeparture,Pageable pageable) {
-		
-		Specification<Trip> spec = Specification.where(new TripWithCategory(category)).and(new TripWithClient(clientUsername))
-												.and(new TripWithPlaces(places)).and(new TripWithStatus(status))
-												.and(new TripWithDate(fromDate, toDate)).and(new TripWithDeparture(fromDeparture, toDeparture));
-		return tripRepository.findAll(spec,pageable);
+	public Page<Trip> findAll(Category category, String clientUsername, Integer places, Status status, Date fromDate,
+			Date toDate, Date fromDeparture, Date toDeparture, Pageable pageable) {
+
+		Specification<Trip> spec = Specification.where(new TripWithCategory(category))
+				.and(new TripWithClient(clientUsername)).and(new TripWithPlaces(places)).and(new TripWithStatus(status))
+				.and(new TripWithDate(fromDate, toDate)).and(new TripWithDeparture(fromDeparture, toDeparture));
+		return tripRepository.findAll(spec, pageable);
 	}
 
 	@Override
@@ -65,15 +66,21 @@ public class TripServiceImpl implements TripService {
 	@Validated(OnTripCreate.class)
 	public Trip save(@NotNull @Valid Trip trip) {
 
-		BookedPlace place= bookedPlaceService.bookedPlacesFromDateAndDeparture(trip.getType().getId(), trip.getDate(), trip.getDeparture());
-		int reservedPlaces= (int) place.getBookedPlaces();
-		
-		if(trip.getType().getMaxPlaces()-(trip.getPlaces()+reservedPlaces)<0)
-			throw new ConstraintViolationException(messageSource.getMessage("error.TripService.places",
-					new Object[] {trip.getType().getMaxPlaces()-reservedPlaces},LocaleContextHolder.getLocale()),null);
-		
-		
+		checkPlaces(trip);
+		DepartureChecker.check(trip, null, messageSource);
+
 		return tripRepository.saveAndFlush(trip);
+	}
+
+	private void checkPlaces(Trip trip) {
+		BookedPlace place = bookedPlaceService.bookedPlacesFromDateAndDeparture(trip.getType().getId(), trip.getDate(),
+				trip.getDeparture());
+		int reservedPlaces = (int) place.getBookedPlaces();
+
+		if (trip.getType().getMaxPlaces() - (trip.getPlaces() + reservedPlaces) < 0)
+			throw new ConstraintViolationException(messageSource.getMessage("error.TripService.places",
+					new Object[] { trip.getType().getMaxPlaces() - reservedPlaces }, LocaleContextHolder.getLocale()),
+					null);
 	}
 
 	@Override

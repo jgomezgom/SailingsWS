@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.error.utils.DepartureChecker;
 import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Booking;
 import cat.institutmarianao.sailing.ws.model.Cancellation;
+import cat.institutmarianao.sailing.ws.model.Rescheduling;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.repository.ActionRepository;
@@ -70,6 +72,8 @@ public class ActionServiceImpl implements ActionService {
 			checkPerformer(action, trip);
 			checkHours(trip);
 		}
+		if (action instanceof Rescheduling rescheduling)
+			DepartureChecker.check(trip, rescheduling.getNewDeparture(), messageSource);
 	}
 
 	private void checkPerformer(Action action, Trip trip) {
