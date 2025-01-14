@@ -21,9 +21,9 @@ public class DepartureChecker {
 		if (trip.getType().getCategory().equals(Category.GROUP)) {
 			List<Date> departures = trip.getType().getDepartures();
 			if (departure != null)
-				checkDeparture(trip.getDeparture(), messageSource, departures);
+				checkDeparture(departure, messageSource, departures);
 
-			checkDeparture(departure, messageSource, departures);
+			checkDeparture(trip.getDeparture(), messageSource, departures);
 		}
 	}
 
