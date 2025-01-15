@@ -45,7 +45,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	 * For validating Path Variables and Request Parameters
 	 */
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<Object> handleConstraintViolationException(Exception ex) {
+	public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.UNPROCESSABLE_ENTITY);
 	}
@@ -54,7 +54,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	 * For individual cases of Forbidden actions
 	 */
 	@ExceptionHandler(ForbiddenException.class)
-	public ResponseEntity<Object> handleForbiddenException(Exception ex) {
+	public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.FORBIDDEN);
 	}
@@ -64,9 +64,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	 * For not found
 	 */
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<Object> handleNotFoundException(Exception ex) {
+	public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex) {
+		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.LOCKED, ex.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.LOCKED);
 	}
 
 	/**
