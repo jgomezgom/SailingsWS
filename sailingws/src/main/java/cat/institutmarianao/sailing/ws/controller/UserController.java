@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Admin;
 import cat.institutmarianao.sailing.ws.model.Client;
 import cat.institutmarianao.sailing.ws.model.User;
@@ -110,6 +111,9 @@ public class UserController {
 	@PutMapping("/update")
 	@Validated(OnUserUpdate.class)
 	public UserDto update(@RequestBody @Valid UserDto userDto) {
+		if (!userService.existsById(userDto.getUsername()))
+			throw new NotFoundException(messageSource.getMessage("error.UserService.user.not.found",
+					new Object[] { userDto.getUsername() }, LocaleContextHolder.getLocale()));
 		return conversionService.convert(userService.update(convertAndEncodePassword(userDto)), UserDto.class);
 	}
 
@@ -121,10 +125,18 @@ public class UserController {
 	@DeleteMapping("/delete/by/username/{username}")
 	public void deleteByUsername(@PathVariable("username") @NotBlank String username) throws IllegalStateException {
 		try {
+			if (!userService.existsById(username))
+				throw new NotFoundException(messageSource.getMessage("error.UserService.user.not.found",
+						new Object[] { username }, LocaleContextHolder.getLocale()));
+
 			userService.deleteByUsername(username);
 		} catch (DataIntegrityViolationException e) {
+			if (userService.getByUsername(username) instanceof Admin)
+				throw new IllegalStateException(messageSource.getMessage("error.UserService.admin.delete", null,
+						LocaleContextHolder.getLocale()));
+
 			throw new IllegalStateException(
-					messageSource.getMessage("error.UserService.user.delete", null, LocaleContextHolder.getLocale()));
+					messageSource.getMessage("error.UserService.client.delete", null, LocaleContextHolder.getLocale()));
 		}
 	}
 

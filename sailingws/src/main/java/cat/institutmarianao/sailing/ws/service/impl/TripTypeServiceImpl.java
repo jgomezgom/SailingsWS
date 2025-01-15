@@ -3,6 +3,8 @@ package cat.institutmarianao.sailing.ws.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
@@ -18,6 +20,9 @@ public class TripTypeServiceImpl implements TripTypeService {
 
 	@Autowired
 	private TripTypeRepository tripTypeRepository;
+
+	@Autowired
+	private MessageSource messageSource;
 
 	@Override
 	public List<TripType> findAllTripTypes() {
@@ -41,7 +46,9 @@ public class TripTypeServiceImpl implements TripTypeService {
 
 	@Override
 	public TripType findById(@NotNull @Positive Long id) {
-		return tripTypeRepository.findById(id).orElseThrow(NotFoundException::new);
+		return tripTypeRepository.findById(id).orElseThrow(
+				() -> new NotFoundException(messageSource.getMessage("error.TripTypeService.triptype.not.found",
+						new Object[] { id }, LocaleContextHolder.getLocale())));
 	}
 
 }

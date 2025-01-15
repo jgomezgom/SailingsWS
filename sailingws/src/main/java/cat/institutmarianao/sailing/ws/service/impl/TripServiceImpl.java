@@ -85,7 +85,8 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public Trip findById(@NotNull @Positive Long id) {
-		return tripRepository.findById(id).orElseThrow(NotFoundException::new);
+		return tripRepository.findById(id).orElseThrow(() -> new NotFoundException(messageSource
+				.getMessage("error.TripService.trip.not.found", new Object[] { id }, LocaleContextHolder.getLocale())));
 	}
 
 }
