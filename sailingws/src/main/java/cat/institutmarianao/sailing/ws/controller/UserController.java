@@ -82,8 +82,10 @@ public class UserController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
-			@RequestParam(value = "fullName", required = false) String fullName, Pageable pagination) {
-
+			@RequestParam(value = "fullName", required = false) String fullName,
+			@RequestParam(required = false) Pageable pagination) {
+		if (pagination == null)
+			pagination = Pageable.unpaged();
 		return userService.findAll(roles, fullName, pagination).map(u -> conversionService.convert(u, UserDto.class));
 	}
 

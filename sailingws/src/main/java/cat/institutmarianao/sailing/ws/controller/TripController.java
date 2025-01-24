@@ -66,16 +66,15 @@ public class TripController {
 
 	@Autowired
 	private TripService tripService;
-	
+
 	@Autowired
 	private ActionService actionService;
 
 	@Autowired
 	private BookedPlaceService bookedPlaceService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
 
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
@@ -89,9 +88,11 @@ public class TripController {
 			@RequestParam(value = "to date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
 			@RequestParam(value = "from departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
 			@RequestParam(value = "to departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
-			Pageable pagination) {
-		
-		return tripService.findAll(category,clientUsername,places,status,fromDate,toDate,fromDeparture,toDeparture,pagination).map(t -> conversionService.convert(t, TripDto.class));
+			@RequestParam(required = false) Pageable pagination) {
+		if (pagination == null)
+			pagination = Pageable.unpaged();
+		return tripService.findAll(category, clientUsername, places, status, fromDate, toDate, fromDeparture,
+				toDeparture, pagination).map(t -> conversionService.convert(t, TripDto.class));
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")
@@ -119,16 +120,19 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Action saved ok")
 	/**/
 	@PostMapping("/save/action")
-	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) throws ParseException {
+	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto)
+			throws ParseException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
-			if(actionDto instanceof CancellationDto)
-				throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.admin", null,LocaleContextHolder.getLocale()));
-		} else if(actionDto instanceof ReschedulingDto || actionDto instanceof DoneDto)
-			throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.client", null,LocaleContextHolder.getLocale()));
-		
+			if (actionDto instanceof CancellationDto)
+				throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.admin", null,
+						LocaleContextHolder.getLocale()));
+		} else if (actionDto instanceof ReschedulingDto || actionDto instanceof DoneDto)
+			throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.client", null,
+					LocaleContextHolder.getLocale()));
+
 		return conversionService.convert(actionService.saveAction(convertAction(actionDto)), ActionDto.class);
 	}
 
