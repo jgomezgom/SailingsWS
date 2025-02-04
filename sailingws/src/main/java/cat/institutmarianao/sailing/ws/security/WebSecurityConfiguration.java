@@ -22,10 +22,9 @@ import jakarta.servlet.DispatcherType;
 @Configuration
 public class WebSecurityConfiguration {
 	protected static final String[] PUBLIC_URLS = { "/", "/signup", "/users/check/**" };
-	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/save", "/users/delete/**",
-			"/trips/find/all", };
+	protected static final String[] ADMIN_URLS = { "/users/save", "/users/delete/**" };
 	protected static final String[] CLIENT_URLS = { "/trips/save" };
-	protected static final String[] USER_URLS = { "/users/**" };
+	protected static final String[] USER_URLS = { "/users/**", "/users/find/all/**", "/trips/find/all" };
 
 	@Autowired
 	private AuthenticationFilter authenticationFilter;

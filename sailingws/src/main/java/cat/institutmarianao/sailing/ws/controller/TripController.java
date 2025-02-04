@@ -81,13 +81,13 @@ public class TripController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<TripDto> findAll(@RequestParam(value = "type", required = false) Category category,
-			@RequestParam(value = "client username", required = false) String clientUsername,
+			@RequestParam(value = "client_username", required = false) String clientUsername,
 			@RequestParam(value = "places", required = false) Integer places,
 			@RequestParam(value = "status", required = false) Status status,
-			@RequestParam(value = "from date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date fromDate,
-			@RequestParam(value = "to date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
-			@RequestParam(value = "from departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
-			@RequestParam(value = "to departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
+			@RequestParam(value = "from_date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date fromDate,
+			@RequestParam(value = "to_date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
+			@RequestParam(value = "from_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
+			@RequestParam(value = "to_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
 			@RequestParam(required = false) Pageable pagination) {
 		if (pagination == null)
 			pagination = Pageable.unpaged();
