@@ -22,6 +22,7 @@ import cat.institutmarianao.sailing.ws.model.Cancellation;
 import cat.institutmarianao.sailing.ws.model.Rescheduling;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
+import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import cat.institutmarianao.sailing.ws.repository.ActionRepository;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
@@ -60,26 +61,31 @@ public class ActionServiceImpl implements ActionService {
 	private void checkErrors(Action action) throws ParseException {
 		Trip trip = action.getTrip();
 
-		if (trip.getStatus().equals(Status.CANCELLED) || trip.getStatus().equals(Status.DONE))
+		if (trip.getStatus().equals(Status.CANCELLED) || trip.getStatus().equals(Status.DONE)) {
 			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.finished",
 					null, LocaleContextHolder.getLocale()), null);
+		}
 
-		if (action instanceof Booking)
+		if (action instanceof Booking) {
 			throw new ConstraintViolationException(messageSource.getMessage("error.Tracking.action.already.booking",
 					null, LocaleContextHolder.getLocale()), null);
+		}
 
 		if (action instanceof Cancellation) {
 			checkPerformer(action, trip);
 			checkHours(trip);
 		}
-		if (action instanceof Rescheduling rescheduling)
+		if (action.getTrip().getType().getCategory().equals(Category.GROUP)
+				&& action instanceof Rescheduling rescheduling) {
 			DepartureChecker.check(trip, rescheduling.getNewDeparture(), messageSource);
+		}
 	}
 
 	private void checkPerformer(Action action, Trip trip) {
-		if (!action.getPerformer().equals(trip.getClient()))
+		if (!action.getPerformer().equals(trip.getClient())) {
 			throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.performer", null,
 					LocaleContextHolder.getLocale()));
+		}
 
 	}
 
@@ -90,9 +96,10 @@ public class ActionServiceImpl implements ActionService {
 
 		Date tripDate = sdfDateTime.parse(sdfDate.format(trip.getDate()) + " " + sdfTime.format(trip.getDeparture()));
 		long difference = Duration.ofMillis(tripDate.getTime() - new Date().getTime()).toHours();
-		if (difference < maxHoursDifference)
+		if (difference < maxHoursDifference) {
 			throw new ConstraintViolationException(messageSource.getMessage(
 					"error.Tracking.action.cancellation.date.difference", null, LocaleContextHolder.getLocale()), null);
+		}
 	}
 
 }

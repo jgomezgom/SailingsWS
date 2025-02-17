@@ -67,7 +67,9 @@ public class TripServiceImpl implements TripService {
 	public Trip save(@NotNull @Valid Trip trip) {
 
 		checkPlaces(trip);
-		DepartureChecker.check(trip, null, messageSource);
+		if (trip.getType().getCategory().equals(Category.GROUP)) {
+			DepartureChecker.check(trip, null, messageSource);
+		}
 
 		return tripRepository.saveAndFlush(trip);
 	}
@@ -77,10 +79,11 @@ public class TripServiceImpl implements TripService {
 				trip.getDeparture());
 		int reservedPlaces = (int) place.getBookedPlaces();
 
-		if (trip.getType().getMaxPlaces() - (trip.getPlaces() + reservedPlaces) < 0)
+		if (trip.getType().getMaxPlaces() - (trip.getPlaces() + reservedPlaces) < 0) {
 			throw new ConstraintViolationException(messageSource.getMessage("error.TripService.places",
 					new Object[] { trip.getType().getMaxPlaces() - reservedPlaces }, LocaleContextHolder.getLocale()),
 					null);
+		}
 	}
 
 	@Override
