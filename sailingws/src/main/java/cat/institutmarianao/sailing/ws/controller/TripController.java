@@ -82,15 +82,16 @@ public class TripController {
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<TripDto> findAll(@RequestParam(value = "type", required = false) Category category,
 			@RequestParam(value = "client_username", required = false) String clientUsername,
-			@RequestParam(value = "places", required = false) Integer places,
+			@RequestParam(value = "places", required = false) @Positive Integer places,
 			@RequestParam(value = "status", required = false) Status status,
 			@RequestParam(value = "from_date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date fromDate,
 			@RequestParam(value = "to_date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
 			@RequestParam(value = "from_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
 			@RequestParam(value = "to_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
 			@RequestParam(required = false) Pageable pagination) {
-		if (pagination == null)
+		if (pagination == null) {
 			pagination = Pageable.unpaged();
+		}
 		return tripService.findAll(category, clientUsername, places, status, fromDate, toDate, fromDeparture,
 				toDeparture, pagination).map(t -> conversionService.convert(t, TripDto.class));
 	}
@@ -126,12 +127,14 @@ public class TripController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
-			if (actionDto instanceof CancellationDto)
+			if (actionDto instanceof CancellationDto) {
 				throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.admin", null,
 						LocaleContextHolder.getLocale()));
-		} else if (actionDto instanceof ReschedulingDto || actionDto instanceof DoneDto)
+			}
+		} else if (actionDto instanceof ReschedulingDto || actionDto instanceof DoneDto) {
 			throw new ForbiddenException(messageSource.getMessage("error.Tracking.action.forbidden.client", null,
 					LocaleContextHolder.getLocale()));
+		}
 
 		return conversionService.convert(actionService.saveAction(convertAction(actionDto)), ActionDto.class);
 	}
