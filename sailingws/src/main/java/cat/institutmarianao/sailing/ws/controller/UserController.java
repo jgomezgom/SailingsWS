@@ -82,10 +82,10 @@ public class UserController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
-			@RequestParam(value = "fullName", required = false) String fullName,
-			@RequestParam(required = false) Pageable pagination) {
-		if (pagination == null)
+			@RequestParam(value = "fullName", required = false) String fullName, Pageable pagination) {
+		if (pagination == null) {
 			pagination = Pageable.unpaged();
+		}
 		return userService.findAll(roles, fullName, pagination).map(u -> conversionService.convert(u, UserDto.class));
 	}
 
@@ -97,9 +97,10 @@ public class UserController {
 	@PostMapping(value = "/save")
 	public @ResponseBody UserDto save(@RequestBody @NotNull UserDto userDto) {
 
-		if (userService.existsById(userDto.getUsername()))
+		if (userService.existsById(userDto.getUsername())) {
 			throw new ConstraintViolationException(messageSource.getMessage("error.UserService.user.already.exists",
 					new Object[] { userDto.getUsername() }, LocaleContextHolder.getLocale()), null);
+		}
 		return conversionService.convert(userService.save(convertAndEncodePassword(userDto)), UserDto.class);
 	}
 
@@ -113,9 +114,10 @@ public class UserController {
 	@PutMapping("/update")
 	@Validated(OnUserUpdate.class)
 	public UserDto update(@RequestBody @Valid UserDto userDto) {
-		if (!userService.existsById(userDto.getUsername()))
+		if (!userService.existsById(userDto.getUsername())) {
 			throw new NotFoundException(messageSource.getMessage("error.UserService.user.not.found",
 					new Object[] { userDto.getUsername() }, LocaleContextHolder.getLocale()));
+		}
 		return conversionService.convert(userService.update(convertAndEncodePassword(userDto)), UserDto.class);
 	}
 
@@ -127,15 +129,17 @@ public class UserController {
 	@DeleteMapping("/delete/by/username/{username}")
 	public void deleteByUsername(@PathVariable("username") @NotBlank String username) throws IllegalStateException {
 		try {
-			if (!userService.existsById(username))
+			if (!userService.existsById(username)) {
 				throw new NotFoundException(messageSource.getMessage("error.UserService.user.not.found",
 						new Object[] { username }, LocaleContextHolder.getLocale()));
+			}
 
 			userService.deleteByUsername(username);
 		} catch (DataIntegrityViolationException e) {
-			if (userService.getByUsername(username) instanceof Admin)
+			if (userService.getByUsername(username) instanceof Admin) {
 				throw new IllegalStateException(messageSource.getMessage("error.UserService.admin.delete", null,
 						LocaleContextHolder.getLocale()));
+			}
 
 			throw new IllegalStateException(
 					messageSource.getMessage("error.UserService.client.delete", null, LocaleContextHolder.getLocale()));
@@ -144,8 +148,9 @@ public class UserController {
 
 	private User convertAndEncodePassword(UserDto userDto) {
 		String rawPassword = userDto.getPassword();
-		if (rawPassword != null)
+		if (rawPassword != null) {
 			userDto.setPassword(passwordEncoder.encode(rawPassword));
+		}
 		return conversionService.convert(userDto, User.class);
 	}
 }

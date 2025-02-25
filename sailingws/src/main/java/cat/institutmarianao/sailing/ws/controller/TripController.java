@@ -88,7 +88,7 @@ public class TripController {
 			@RequestParam(value = "to_date", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date toDate,
 			@RequestParam(value = "from_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date fromDeparture,
 			@RequestParam(value = "to_departure", required = false) @DateTimeFormat(pattern = SailingWsApplication.TIME_PATTERN) @Parameter(description = SailingWsApplication.TIME_PATTERN) Date toDeparture,
-			@RequestParam(required = false) Pageable pagination) {
+			Pageable pagination) {
 		if (pagination == null) {
 			pagination = Pageable.unpaged();
 		}
