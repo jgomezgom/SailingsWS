@@ -16,7 +16,8 @@ public class AdminDto extends UserDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public AdminDto(String username, String password) {
-		super(username, password);
+		super(username);
+		this.password=password;
 		role = Role.ADMIN;
 	}
 }

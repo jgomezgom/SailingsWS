@@ -47,8 +47,7 @@ public abstract class UserDto implements Serializable {
 
 	/* Validation */
 	/* Lombok */
-	@NonNull
-	@NotBlank
+	@NotBlank(groups =  OnUserCreate.class )
 	@Size(min = User.MIN_PASSWORD, groups = { OnUserCreate.class, OnUserUpdate.class })
 	@JsonProperty(access = Access.WRITE_ONLY)
 	protected String password;

@@ -62,14 +62,17 @@ public class UserServiceImpl implements UserService {
 	public User update(@NotNull @Valid User user) {
 		User dbUser = getByUsername(user.getUsername());
 
-		if (user.getPassword() != null)
+		if (user.getPassword() != null && !user.getPassword().isBlank()) {
 			dbUser.setPassword(user.getPassword());
+		}
 
 		if (user instanceof Client client && dbUser instanceof Client dbClient) {
-			if (client.getFullName() != null)
+			if (client.getFullName() != null) {
 				dbClient.setFullName(client.getFullName());
-			if (client.getPhone() != null)
+			}
+			if (client.getPhone() != null) {
 				dbClient.setPhone(client.getPhone());
+			}
 		}
 
 		return userRepository.saveAndFlush(dbUser);

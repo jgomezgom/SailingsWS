@@ -2,6 +2,7 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -55,7 +56,7 @@ public abstract class User implements Serializable {
 
 	/* Validation */
 	/* JPA */
-	@NotBlank
+	@NotBlank(groups =  OnUserCreate.class )
 	@Size(min = MIN_PASSWORD)
 	@Column(nullable = false)
 	protected String password;
